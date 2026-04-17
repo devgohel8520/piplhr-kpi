@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPI Dashboard - Track Your Success</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f5f9;
+      --bg-hover: #e2e8f0;
+      --border: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --blue: #2563eb;
+      --blue-hover: #1d4ed8;
+      --blue-subtle: #eff6ff;
+      --green: #22c55e;
+      --green-subtle: #f0fdf4;
+      --yellow: #eab308;
+      --yellow-subtle: #fefce8;
+      --red: #ef4444;
+      --red-subtle: #fef2f2;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      padding: 0 24px;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--blue);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all 150ms ease;
+    }
+
+    .nav-link:hover {
+      color: var(--blue);
+      background: var(--blue-subtle);
+    }
+
+    .nav-link.active {
+      color: var(--blue);
+      background: var(--blue-subtle);
+    }
+
+    /* Mobile Menu */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      padding: 8px;
+      cursor: pointer;
+      color: var(--text-primary);
+    }
+
+    .nav-mobile {
+      display: none;
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 16px;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-mobile.active {
+      display: flex;
+    }
+
+    .nav-mobile .nav-link {
+      width: 100%;
+      padding: 12px 16px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 150ms ease;
+      border: none;
+      font-family: inherit;
+      text-decoration: none;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--blue-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-tertiary);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+    }
+
+    .btn-ghost:hover {
+      color: var(--blue);
+      background: var(--blue-subtle);
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-lg {
+      padding: 14px 28px;
+      font-size: 16px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      transition: all 150ms ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-input.error {
+      border-color: var(--red);
+    }
+
+    .form-error {
+      font-size: 13px;
+      color: var(--red);
+      margin-top: 6px;
+    }
+
+    /* Auth Pages */
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 40px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .auth-footer a {
+      color: var(--blue);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Landing Page */
+    .landing {
+      padding-top: 80px;
+    }
+
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--blue-subtle);
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-title span {
+      color: var(--blue);
+    }
+
+    .hero-description {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .features {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .features-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .features-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: all 200ms ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--blue-subtle);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: var(--blue);
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .cta {
+      background: var(--blue);
+      color: white;
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .cta-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .cta-description {
+      font-size: 18px;
+      opacity: 0.9;
+      margin-bottom: 32px;
+    }
+
+    .cta .btn {
+      background: white;
+      color: var(--blue);
+    }
+
+    .cta .btn:hover {
+      background: var(--bg-tertiary);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Dashboard Layout */
+    .dashboard {
+      padding-top: 80px;
+      min-height: 100vh;
+    }
+
+    .dashboard-header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+    }
+
+    .dashboard-header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .user-name {
+      font-weight: 500;
+    }
+
+    .dashboard-nav {
+      display: flex;
+      gap: 4px;
+      padding: 0 24px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .dashboard-nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      gap: 4px;
+    }
+
+    .dashboard-main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: all 150ms ease;
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    }
+
+    /* KPI Card */
+    .kpi-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .kpi-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .kpi-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .kpi-type-badge {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+    }
+
+    .kpi-target {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .kpi-target span {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .kpi-value {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .kpi-progress {
+      height: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .kpi-progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 300ms ease;
+    }
+
+    .kpi-progress-bar.on-track { background: var(--green); }
+    .kpi-progress-bar.behind { background: var(--yellow); }
+    .kpi-progress-bar.exceeded { background: var(--blue); }
+
+    .kpi-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kpi-percent {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .kpi-status {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .kpi-status.on-track { background: var(--green-subtle); color: #16a34a; }
+    .kpi-status.behind { background: var(--yellow-subtle); color: #ca8a04; }
+    .kpi-status.exceeded { background: var(--blue-subtle); color: var(--blue); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 200ms ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      transform: scale(0.95);
+      transition: transform 200ms ease;
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding: 20px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Form */
+    .form-select {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Table */
+    .table-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .entry-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .entry-table th,
+    .entry-table td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .entry-table th {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      background: var(--bg-tertiary);
+    }
+
+    .entry-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .entry-table tr:hover td {
+      background: var(--bg-primary);
+    }
+
+    .entry-input {
+      width: 120px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+    }
+
+    .entry-input:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+
+    /* Date Filter */
+    .date-filter {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .date-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .date-pill {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .date-pill:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .date-pill.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+    }
+
+    .date-input {
+      padding: 8px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .stat-change {
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .stat-change.positive { color: #16a34a; }
+    .stat-change.negative { color: var(--red); }
+
+    /* KPI List */
+    .kpi-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      transition: all 150ms ease;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .kpi-list-item:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kpi-list-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .kpi-list-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .kpi-list-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .kpi-list-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 64px 24px;
+    }
+
+    .empty-state-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      background: var(--bg-tertiary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .empty-state-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .empty-state-text {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-lg);
+      animation: slideIn 200ms ease;
+    }
+
+    .toast.success { border-color: var(--green); }
+    .toast.error { border-color: var(--red); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Toggle */
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 12px;
+      transition: all 150ms ease;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      border-radius: 50%;
+      transition: all 150ms ease;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: var(--blue);
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateY(-50%) translateX(20px);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Views */
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .nav-toggle {
+        display: flex;
+      }
+
+      .hero {
+        padding: 60px 20px;
+      }
+
+      .hero-title {
+        font-size: 32px;
+      }
+
+      .hero-description {
+        font-size: 16px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .hero-buttons .btn {
+        width: 100%;
+      }
+
+      .features {
+        padding: 60px 20px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta {
+        padding: 60px 20px;
+      }
+
+      .dashboard-header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .dashboard-nav {
+        padding: 0 16px;
+      }
+
+      .dashboard-nav-inner {
+        width: 100%;
+      }
+
+      .dashboard-nav .nav-link {
+        flex: 1;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .dashboard-main {
+        padding: 24px 16px;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-card {
+        padding: 32px 24px;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      .entry-table {
+        min-width: 500px;
+      }
+
+      .kpi-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .kpi-list-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .date-filter {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-inner {
+        padding: 0 16px;
+      }
+
+      .auth-page {
+        padding: 80px 16px 24px;
+      }
+
+      .auth-card {
+        padding: 24px 20px;
+      }
+
+      .kpi-value {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" onclick="navigate('landing'); return false;">
+        <div class="nav-logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+          </svg>
+        </div>
+        KPI Tracker
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="#" class="nav-link" onclick="navigate('landing'); return false;">Home</a>
+        <a href="#" class="nav-link" id="nav-features" onclick="navigate('landing'); return false;">Features</a>
+        <a href="#" class="nav-link" id="nav-pricing" onclick="navigate('landing'); return false;">Pricing</a>
+        <a href="#" class="btn btn-primary btn-sm" id="nav-login" onclick="navigate('login'); return false;">Login</a>
+        <a href="#" class="btn btn-outline btn-sm" id="nav-signup" onclick="navigate('signup'); return false;">Sign Up</a>
+      </div>
+      <button class="nav-toggle" onclick="toggleMobileMenu()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+    <div class="nav-mobile" id="nav-mobile"></div>
+  </nav>
+
+  <!-- Landing Page -->
+  <div id="view-landing" class="view landing">
+    <section class="hero">
+      <div class="hero-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Track Your Success
+      </div>
+      <h1 class="hero-title">Measure What Matters<br><span>Grow What Counts</span></h1>
+      <p class="hero-description">Create custom KPIs, track daily achievements, and visualize your progress. Stay on target with powerful analytics and comparisons.</p>
+      <div class="hero-buttons">
+        <a href="#" class="btn btn-primary btn-lg" onclick="navigate('signup'); return false;">Start Free Today</a>
+        <a href="#" class="btn btn-outline btn-lg" onclick="navigate('login'); return false;">Sign In</a>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="features-header">
+        <h2 class="features-title">Everything You Need to Succeed</h2>
+        <p style="color: var(--text-secondary);">Powerful features to help you track, measure, and achieve your goals.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20V10M18 20V4M6 20v-4"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Custom KPIs</h3>
+          <p class="feature-description">Create unlimited custom key performance indicators tailored to your business needs.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+              <path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Daily Tracking</h3>
+          <p class="feature-description">Log your daily achievements easily with our intuitive entry system.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Visual Analytics</h3>
+          <p class="feature-description">See your progress at a glance with beautiful charts and progress bars.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Team Ready</h3>
+          <p class="feature-description">Perfect for teams to track and share performance metrics.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Smart Comparisons</h3>
+          <p class="feature-description">Compare your performance across different time periods instantly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="18" height="18" x="3" y="3" rx="2"/>
+              <path d="M3 9h18M9 21V9"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Flexible Reports</h3>
+          <p class="feature-description">Generate detailed reports for any time period with just a few clicks.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <h2 class="cta-title">Ready to Start Tracking?</h2>
+      <p class="cta-description">Join thousands of users who are already measuring their success.</p>
+      <a href="#" class="btn btn-lg" onclick="navigate('signup'); return false;">Get Started Free</a>
+    </section>
+
+    <footer class="footer">
+      <p>&copy; 2026 KPI Tracker. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <!-- Login Page -->
+  <div id="view-login" class="view auth-page">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-subtitle">Sign in to continue to your dashboard</p>
+      </div>
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email</label>
+          <input type="email" id="login-email" class="form-input" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-input" placeholder="Enter your password" required>
+        </div>
+        <div id="login-error" class="form-error" style="display: none; margin-bottom: 16px;"></div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+      </form>
+      <div class="auth-footer">
+        Don't have an account? <a href="#" onclick="navigate('signup'); return false;">Sign up</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signup Page -->
+  <div id="view-signup" class="view auth-page">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Start tracking your KPIs today</p>
+      </div>
+      <form id="signup-form" onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label class="form-label" for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" class="form-input" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signup-email">Email</label>
+          <input type="email" id="signup-email" class="form-input" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signup-password">Password</label>
+          <input type="password" id="signup-password" class="form-input" placeholder="At least 6 characters" required minlength="6">
+        </div>
+        <div id="signup-error" class="form-error" style="display: none; margin-bottom: 16px;"></div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+      </form>
+      <div class="auth-footer">
+        Already have an account? <a href="#" onclick="navigate('login'); return false;">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="view-dashboard" class="view dashboard">
+    <div class="dashboard-header">
+      <div class="dashboard-header-inner">
+        <div class="user-info">
+          <div class="user-avatar" id="user-avatar">J</div>
+          <span class="user-name" id="user-name">John Doe</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="handleLogout()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+    <div class="dashboard-nav">
+      <div class="dashboard-nav-inner">
+        <button class="nav-link active" data-view="dashboard" onclick="switchView('dashboard')">Dashboard</button>
+        <button class="nav-link" data-view="entry" onclick="switchView('entry')">Daily Entry</button>
+        <button class="nav-link" data-view="reports" onclick="switchView('reports')">Reports</button>
+        <button class="nav-link" data-view="kpis" onclick="switchView('kpis')">Manage KPIs</button>
+      </div>
+    </div>
+    <div class="dashboard-main">
+      <!-- Dashboard View -->
+      <div id="view-dashboard-content" class="view active">
+        <div class="page-header">
+          <h1 class="page-title">Dashboard</h1>
+          <button class="btn btn-primary" onclick="openKpiModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            New KPI
+          </button>
+        </div>
+        <div id="dashboard-grid" class="grid grid-3"></div>
+        <div id="dashboard-empty" class="empty-state" style="display: none;">
+          <div class="empty-state-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+          </div>
+          <h3 class="empty-state-title">No KPIs Yet</h3>
+          <p class="empty-state-text">Create your first KPI to start tracking your performance.</p>
+          <button class="btn btn-primary" onclick="openKpiModal()">Create First KPI</button>
+        </div>
+      </div>
+
+      <!-- Entry View -->
+      <div id="view-entry-content" class="view">
+        <div class="page-header">
+          <h1 class="page-title">Daily Entry</h1>
+          <button class="btn btn-primary" onclick="saveEntries()">Save All</button>
+        </div>
+        <div class="date-filter">
+          <input type="date" id="entry-date" class="date-input" onchange="loadEntriesForDate()">
+        </div>
+        <div id="entry-table-container" class="table-container" style="display: none;">
+          <table class="entry-table">
+            <thead>
+              <tr>
+                <th>KPI Name</th>
+                <th>Target</th>
+                <th>Achieved</th>
+              </tr>
+            </thead>
+            <tbody id="entry-tbody"></tbody>
+          </table>
+        </div>
+        <div id="entry-empty" class="empty-state" style="display: none;">
+          <div class="empty-state-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+              <path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+          </div>
+          <h3 class="empty-state-title">No KPIs Available</h3>
+          <p class="empty-state-text">Create some KPIs first before logging daily entries.</p>
+          <button class="btn btn-primary" onclick="switchView('kpis'); openKpiModal();">Create KPI</button>
+        </div>
+      </div>
+
+      <!-- Reports View -->
+      <div id="view-reports-content" class="view">
+        <div class="page-header">
+          <h1 class="page-title">Reports</h1>
+        </div>
+        <div class="date-filter">
+          <div class="date-pills">
+            <button class="date-pill active" data-period="today" onclick="setReportPeriod('today')">Today</button>
+            <button class="date-pill" data-period="week" onclick="setReportPeriod('week')">This Week</button>
+            <button class="date-pill" data-period="month" onclick="setReportPeriod('month')">This Month</button>
+            <button class="date-pill" data-period="quarter" onclick="setReportPeriod('quarter')">This Quarter</button>
+            <button class="date-pill" data-period="year" onclick="setReportPeriod('year')">This Year</button>
+          </div>
+        </div>
+        <div id="report-stats" class="stats-grid"></div>
+        <div id="report-empty" class="empty-state" style="display: none;">
+          <div class="empty-state-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+          </div>
+          <h3 class="empty-state-title">No Data Available</h3>
+          <p class="empty-state-text">Start logging entries to see reports and comparisons.</p>
+        </div>
+      </div>
+
+      <!-- KPIs View -->
+      <div id="view-kpis-content" class="view">
+        <div class="page-header">
+          <h1 class="page-title">Manage KPIs</h1>
+          <button class="btn btn-primary" onclick="openKpiModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            New KPI
+          </button>
+        </div>
+        <div id="kpi-list"></div>
+        <div id="kpi-empty" class="empty-state" style="display: none;">
+          <div class="empty-state-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </div>
+          <h3 class="empty-state-title">No KPIs Created</h3>
+          <p class="empty-state-text">Create KPIs to track your daily performance and goals.</p>
+          <button class="btn btn-primary" onclick="openKpiModal()">Create KPI</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Modal -->
+  <div id="kpi-modal" class="modal-overlay" onclick="if(event.target===this)closeKpiModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="kpi-modal-title">Create New KPI</h2>
+        <button class="modal-close" onclick="closeKpiModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="kpi-form" onsubmit="handleKpiSubmit(event)">
+          <input type="hidden" id="kpi-id">
+          <div class="form-group">
+            <label class="form-label" for="kpi-title">KPI Title *</label>
+            <input type="text" id="kpi-title" class="form-input" placeholder="Daily Leads Generated" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="kpi-description">Description</label>
+            <input type="text" id="kpi-description" class="form-input" placeholder="Optional description">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="kpi-type">Data Type *</label>
+            <select id="kpi-type" class="form-select" required onchange="handleTypeChange()">
+              <option value="number">Number</option>
+              <option value="percentage">Percentage (%)</option>
+              <option value="boolean">Yes / No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="kpi-target">Target Value *</label>
+            <input type="number" id="kpi-target" class="form-input" placeholder="50" step="any" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeKpiModal()">Cancel</button>
+        <button type="submit" form="kpi-form" class="btn btn-primary" id="kpi-submit-btn">Create KPI</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Loading Overlay -->
+  <div id="loading" class="loading" style="display: none;">
+    <div class="spinner"></div>
+  </div>
+
+  <script>
+    // Configuration
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:3000/api'
+      : '/api';
+
+    // State
+    let user = null;
+    let token = localStorage.getItem('token');
+    let kpis = [];
+    let entries = [];
+    let editingKpiId = null;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      initEntryDate();
+      if (token) {
+        checkAuth();
+      } else {
+        navigate('landing');
+      }
+    });
+
+    // API Helpers
+    async function api(endpoint, options = {}) {
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
+      };
+
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers: { ...headers, ...options.headers }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Request failed');
+      }
+
+      return data;
+    }
+
+    // Auth
+    async function checkAuth() {
+      try {
+        const data = await api('/auth/me');
+        user = data.user;
+        updateUserUI();
+        navigate('dashboard');
+        loadAllData();
+      } catch (error) {
+        console.log('Auth check failed:', error);
+        localStorage.removeItem('token');
+        token = null;
+        navigate('login');
+      }
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+
+      try {
+        const data = await api('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password })
+        });
+
+        token = data.token;
+        user = data.user;
+        localStorage.setItem('token', token);
+        updateUserUI();
+        navigate('dashboard');
+        loadAllData();
+        showToast('Welcome back!', 'success');
+      } catch (error) {
+        errorEl.textContent = error.message;
+        errorEl.style.display = 'block';
+      }
+    }
+
+    async function handleSignup(event) {
+      event.preventDefault();
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const errorEl = document.getElementById('signup-error');
+
+      try {
+        const data = await api('/auth/signup', {
+          method: 'POST',
+          body: JSON.stringify({ name, email, password })
+        });
+
+        token = data.token;
+        user = data.user;
+        localStorage.setItem('token', token);
+        updateUserUI();
+        navigate('dashboard');
+        loadAllData();
+        showToast('Account created successfully!', 'success');
+      } catch (error) {
+        errorEl.textContent = error.message;
+        errorEl.style.display = 'block';
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('token');
+      token = null;
+      user = null;
+      kpis = [];
+      entries = [];
+      navigate('landing');
+      showToast('Logged out successfully', 'success');
+    }
+
+    function updateUserUI() {
+      if (user) {
+        document.getElementById('user-name').textContent = user.name;
+        document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+      }
+    }
+
+    // Navigation
+    function navigate(view) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(`view-${view}`).classList.add('active');
+
+      // Update nav links
+      const isLoggedIn = !!token;
+      const navLinks = document.getElementById('nav-links');
+
+      if (isLoggedIn) {
+        navLinks.innerHTML = `
+          <a href="#" class="nav-link" onclick="navigate('dashboard'); return false;">Dashboard</a>
+          <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        `;
+      } else {
+        navLinks.innerHTML = `
+          <a href="#" class="nav-link" onclick="navigate('landing'); return false;">Home</a>
+          <a href="#" class="nav-link" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'}); return false;">Features</a>
+          <a href="#" class="btn btn-primary btn-sm" onclick="navigate('login'); return false;">Login</a>
+          <a href="#" class="btn btn-outline btn-sm" onclick="navigate('signup'); return false;">Sign Up</a>
+        `;
+      }
+
+      // Close mobile menu
+      document.getElementById('nav-mobile').classList.remove('active');
+    }
+
+    function switchView(view) {
+      document.querySelectorAll('#view-dashboard .view').forEach(v => v.classList.remove('active'));
+      document.getElementById(`view-${view}-content`).classList.add('active');
+      document.querySelectorAll('.dashboard-nav .nav-link').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === view);
+      });
+
+      if (view === 'reports') loadReport();
+    }
+
+    function toggleMobileMenu() {
+      const mobile = document.getElementById('nav-mobile');
+      const isLoggedIn = !!token;
+
+      if (isLoggedIn) {
+        mobile.innerHTML = `
+          <a href="#" class="nav-link" onclick="switchView('dashboard'); navigate('dashboard'); return false;">Dashboard</a>
+          <a href="#" class="nav-link" onclick="switchView('entry'); navigate('dashboard'); return false;">Daily Entry</a>
+          <a href="#" class="nav-link" onclick="switchView('reports'); navigate('dashboard'); return false;">Reports</a>
+          <a href="#" class="nav-link" onclick="switchView('kpis'); navigate('dashboard'); return false;">Manage KPIs</a>
+          <a href="#" class="nav-link" onclick="handleLogout(); return false;">Logout</a>
+        `;
+      } else {
+        mobile.innerHTML = `
+          <a href="#" class="nav-link" onclick="navigate('landing'); return false;">Home</a>
+          <a href="#" class="nav-link" onclick="navigate('login'); return false;">Login</a>
+          <a href="#" class="nav-link" onclick="navigate('signup'); return false;">Sign Up</a>
+        `;
+      }
+
+      mobile.classList.toggle('active');
+    }
+
+    // Data Loading
+    async function loadAllData() {
+      try {
+        const [kpisData, entriesData] = await Promise.all([
+          api('/kpis'),
+          api('/entries')
+        ]);
+        kpis = kpisData.kpis;
+        entries = entriesData.entries;
+        renderAll();
+      } catch (error) {
+        showToast('Failed to load data', 'error');
+      }
+    }
+
+    async function loadEntriesForDate() {
+      const date = document.getElementById('entry-date').value;
+      try {
+        const data = await api(`/entries?start=${date}&end=${date}`);
+        entries = data.entries;
+        renderEntryTable();
+      } catch (error) {
+        showToast('Failed to load entries', 'error');
+      }
+    }
+
+    function renderAll() {
+      renderDashboard();
+      renderEntryTable();
+      renderKpiList();
+    }
+
+    function renderDashboard() {
+      const grid = document.getElementById('dashboard-grid');
+      const empty = document.getElementById('dashboard-empty');
+      const today = getTodayDate();
+
+      if (kpis.length === 0) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      grid.innerHTML = kpis.map(kpi => {
+        const entry = entries.find(e => e.kpi_id === kpi.id && e.date === today);
+        const achieved = entry ? parseFloat(entry.value) : 0;
+        const progress = kpi.target > 0 ? (achieved / kpi.target) * 100 : 0;
+        const status = getStatus(progress);
+        const suffix = kpi.type === 'percentage' ? '%' : '';
+
+        return `
+          <div class="card kpi-card">
+            <div class="kpi-header">
+              <h3 class="kpi-title">${escapeHtml(kpi.title)}</h3>
+              <span class="kpi-type-badge">${kpi.type}</span>
+            </div>
+            <p class="kpi-target">Target: <span>${formatValue(kpi.target)}${suffix}</span></p>
+            <div class="kpi-value">${formatValue(achieved)}${suffix}</div>
+            <div class="kpi-progress">
+              <div class="kpi-progress-bar ${status}" style="width: ${Math.min(progress, 100)}%"></div>
+            </div>
+            <div class="kpi-footer">
+              <span class="kpi-percent">${progress.toFixed(1)}% of target</span>
+              <span class="kpi-status ${status}">${getStatusLabel(status)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderEntryTable() {
+      const container = document.getElementById('entry-table-container');
+      const empty = document.getElementById('entry-empty');
+      const tbody = document.getElementById('entry-tbody');
+      const date = document.getElementById('entry-date').value;
+
+      if (kpis.length === 0) {
+        container.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      container.style.display = 'block';
+      empty.style.display = 'none';
+
+      tbody.innerHTML = kpis.map(kpi => {
+        const entry = entries.find(e => e.kpi_id === kpi.id && e.date === date);
+        const value = entry ? entry.value : '';
+        const suffix = kpi.type === 'percentage' ? '%' : '';
+
+        let inputHtml;
+        if (kpi.type === 'boolean') {
+          const checked = entry && entry.value == 1 ? 'checked' : '';
+          inputHtml = `
+            <label class="toggle">
+              <input type="checkbox" id="entry-${kpi.id}" ${checked} onchange="handleEntryChange('${kpi.id}')">
+              <span class="toggle-slider"></span>
+            </label>
+          `;
+        } else {
+          inputHtml = `
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="number" id="entry-${kpi.id}" class="entry-input" value="${value}" step="any" onchange="handleEntryChange('${kpi.id}')">
+              ${suffix ? `<span style="color:var(--text-muted);">${suffix}</span>` : ''}
+            </div>
+          `;
+        }
+
+        return `
+          <tr>
+            <td><strong>${escapeHtml(kpi.title)}</strong></td>
+            <td style="color:var(--text-secondary);">${formatValue(kpi.target)}${suffix}</td>
+            <td>${inputHtml}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderKpiList() {
+      const list = document.getElementById('kpi-list');
+      const empty = document.getElementById('kpi-empty');
+
+      if (kpis.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      list.innerHTML = kpis.map(kpi => {
+        const suffix = kpi.type === 'percentage' ? '%' : '';
+        return `
+          <div class="kpi-list-item">
+            <div class="kpi-list-info">
+              <div class="kpi-list-title">${escapeHtml(kpi.title)}</div>
+              <div class="kpi-list-meta">${kpi.type} • Target: ${formatValue(kpi.target)}${suffix}</div>
+            </div>
+            <div class="kpi-list-actions">
+              <button class="btn btn-ghost btn-sm" onclick="editKpi('${kpi.id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteKpi('${kpi.id}')">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // KPI CRUD
+    function openKpiModal() {
+      editingKpiId = null;
+      document.getElementById('kpi-modal-title').textContent = 'Create New KPI';
+      document.getElementById('kpi-submit-btn').textContent = 'Create KPI';
+      document.getElementById('kpi-form').reset();
+      document.getElementById('kpi-modal').classList.add('active');
+    }
+
+    function closeKpiModal() {
+      document.getElementById('kpi-modal').classList.remove('active');
+      editingKpiId = null;
+    }
+
+    async function handleKpiSubmit(event) {
+      event.preventDefault();
+
+      const title = document.getElementById('kpi-title').value.trim();
+      const description = document.getElementById('kpi-description').value.trim();
+      const type = document.getElementById('kpi-type').value;
+      const target = parseFloat(document.getElementById('kpi-target').value);
+
+      try {
+        if (editingKpiId) {
+          await api(`/kpis/${editingKpiId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ title, description, type, target })
+          });
+          showToast('KPI updated successfully', 'success');
+        } else {
+          await api('/kpis', {
+            method: 'POST',
+            body: JSON.stringify({ title, description, type, target })
+          });
+          showToast('KPI created successfully', 'success');
+        }
+
+        closeKpiModal();
+        loadAllData();
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    function editKpi(id) {
+      const kpi = kpis.find(k => k.id == id);
+      if (!kpi) return;
+
+      editingKpiId = id;
+      document.getElementById('kpi-modal-title').textContent = 'Edit KPI';
+      document.getElementById('kpi-submit-btn').textContent = 'Save Changes';
+      document.getElementById('kpi-title').value = kpi.title;
+      document.getElementById('kpi-description').value = kpi.description || '';
+      document.getElementById('kpi-type').value = kpi.type;
+      document.getElementById('kpi-target').value = kpi.target;
+      document.getElementById('kpi-modal').classList.add('active');
+    }
+
+    async function deleteKpi(id) {
+      if (!confirm('Are you sure? All associated entries will be deleted.')) return;
+
+      try {
+        await api(`/kpis/${id}`, { method: 'DELETE' });
+        showToast('KPI deleted', 'success');
+        loadAllData();
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    function handleTypeChange() {
+      const type = document.getElementById('kpi-type').value;
+      const targetInput = document.getElementById('kpi-target');
+      if (type === 'percentage') {
+        targetInput.max = '100';
+      } else {
+        targetInput.removeAttribute('max');
+      }
+    }
+
+    // Entry Handling
+    function initEntryDate() {
+      document.getElementById('entry-date').value = getTodayDate();
+    }
+
+    async function handleEntryChange(kpiId) {
+      const date = document.getElementById('entry-date').value;
+      const kpi = kpis.find(k => k.id == kpiId);
+      let value;
+
+      if (kpi.type === 'boolean') {
+        const input = document.getElementById(`entry-${kpiId}`);
+        value = input.checked ? 1 : 0;
+      } else {
+        const input = document.getElementById(`entry-${kpiId}`);
+        value = parseFloat(input.value) || 0;
+      }
+
+      try {
+        await api('/entries', {
+          method: 'POST',
+          body: JSON.stringify({ kpi_id: parseInt(kpiId), date, value })
+        });
+
+        const existing = entries.findIndex(e => e.kpi_id == kpiId && e.date === date);
+        if (existing >= 0) {
+          entries[existing].value = value;
+        } else {
+          entries.push({ kpi_id: parseInt(kpiId), date, value });
+        }
+
+        renderDashboard();
+      } catch (error) {
+        showToast('Failed to save entry', 'error');
+      }
+    }
+
+    function saveEntries() {
+      showToast('All entries saved', 'success');
+    }
+
+    // Reports
+    function setReportPeriod(period) {
+      document.querySelectorAll('.date-pill').forEach(pill => {
+        pill.classList.toggle('active', pill.dataset.period === period);
+      });
+      loadReport(period);
+    }
+
+    async function loadReport(period = 'today') {
+      const { start, end } = getDateRange(period);
+      const statsContainer = document.getElementById('report-stats');
+      const empty = document.getElementById('report-empty');
+
+      try {
+        const data = await api(`/entries?start=${start}&end=${end}`);
+        const periodEntries = data.entries;
+
+        if (periodEntries.length === 0) {
+          statsContainer.innerHTML = '';
+          empty.style.display = 'block';
+          return;
+        }
+
+        empty.style.display = 'none';
+
+        let totalAchieved = 0;
+        let totalTarget = 0;
+
+        periodEntries.forEach(e => {
+          totalAchieved += parseFloat(e.value);
+          totalTarget += parseFloat(e.target);
+        });
+
+        const avgAchievement = totalTarget > 0 ? (totalAchieved / totalTarget) * 100 : 0;
+
+        statsContainer.innerHTML = `
+          <div class="stat-card">
+            <div class="stat-label">Total Entries</div>
+            <div class="stat-value">${periodEntries.length}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Achieved</div>
+            <div class="stat-value">${totalAchieved.toFixed(1)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Average Achievement</div>
+            <div class="stat-value">${avgAchievement.toFixed(1)}%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active KPIs</div>
+            <div class="stat-value">${kpis.length}</div>
+          </div>
+        `;
+      } catch (error) {
+        showToast('Failed to load report', 'error');
+      }
+    }
+
+    // Utilities
+    function getTodayDate() {
+      return new Date().toISOString().split('T')[0];
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatValue(value) {
+      const num = parseFloat(value);
+      return Number.isInteger(num) ? num : num.toFixed(2);
+    }
+
+    function getStatus(progress) {
+      if (progress > 100) return 'exceeded';
+      if (progress >= 80) return 'on-track';
+      return 'behind';
+    }
+
+    function getStatusLabel(status) {
+      const labels = { 'on-track': 'On Track', 'behind': 'Behind', 'exceeded': 'Exceeded' };
+      return labels[status];
+    }
+
+    function getDateRange(period) {
+      const today = new Date();
+      let start, end;
+
+      switch (period) {
+        case 'today':
+          start = end = getTodayDate();
+          break;
+        case 'week':
+          const dayOfWeek = today.getDay();
+          start = new Date(today);
+          start.setDate(today.getDate() - dayOfWeek);
+          end = new Date(today);
+          end.setDate(today.getDate() + (6 - dayOfWeek));
+          start = start.toISOString().split('T')[0];
+          end = end.toISOString().split('T')[0];
+          break;
+        case 'month':
+          start = new Date(today.getFullYear(), today.getMonth(), 1);
+          end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+          start = start.toISOString().split('T')[0];
+          end = end.toISOString().split('T')[0];
+          break;
+        case 'quarter':
+          const quarter = Math.floor(today.getMonth() / 3);
+          start = new Date(today.getFullYear(), quarter * 3, 1);
+          end = new Date(today.getFullYear(), quarter * 3 + 3, 0);
+          start = start.toISOString().split('T')[0];
+          end = end.toISOString().split('T')[0];
+          break;
+        case 'year':
+          start = new Date(today.getFullYear(), 0, 1);
+          end = new Date(today.getFullYear(), 11, 31);
+          start = start.toISOString().split('T')[0];
+          end = end.toISOString().split('T')[0];
+          break;
+        default:
+          start = end = getTodayDate();
+      }
+
+      return { start, end };
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 200);
+      }, 3000);
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeKpiModal();
+      }
+    });
+  </script>
+</body>
+</html>
