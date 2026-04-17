@@ -1561,10 +1561,20 @@
   </div>
 
   <script>
-    // Configuration
-    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? 'http://localhost:3000/api'
-      : '/api';
+    // Configuration - Auto-detect environment
+    const API_URL = (() => {
+      if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+          return 'http://localhost:3000/api';
+        }
+        if (hostname.includes('vercel.app') || hostname.includes('now.sh')) {
+          return '/api';
+        }
+        return '/api';
+      }
+      return '/api';
+    })();
 
     // State
     let user = null;
