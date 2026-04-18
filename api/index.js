@@ -313,6 +313,42 @@ export async function PUT(request) {
     return jsonResponse({ kpi: result[0] });
   }
 
+  // Update Entry
+  const entryMatch = path.match(/^\/api\/entries\/(\d+)$/);
+  if (entryMatch) {
+    const id = entryMatch[1];
+    let body = {};
+    try {
+      body = await request.json();
+    } catch {
+      return errorResponse('Invalid JSON body', 400);
+    }
+
+    const { date, value } = body;
+    
+    // Verify entry belongs to user
+    const existing = await sql`
+      SELECT e.id FROM entries e
+      JOIN kpis k ON e.kpi_id = k.id
+      WHERE e.id = ${id} AND k.user_id = ${auth.user.id}
+    `;
+    
+    if (existing.length === 0) {
+      return errorResponse('Entry not found', 404);
+    }
+
+    const result = await sql`
+      UPDATE entries
+      SET date = COALESCE(${date}, date),
+          value = COALESCE(${value}, value),
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING id, kpi_id, date, value, created_at
+    `;
+
+    return jsonResponse({ entry: result[0] });
+  }
+
   return errorResponse('Not found', 404);
 }
 

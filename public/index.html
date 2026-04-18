@@ -64,8 +64,9 @@
       min-height: 100vh;
     }
 
-    /* Navigation */
+    /* Old Navigation (hidden by default, controlled by JS) */
     .nav {
+      display: none;
       position: fixed;
       top: 0;
       left: 0;
@@ -75,14 +76,6 @@
       border-bottom: 1px solid var(--border);
       z-index: 1000;
       padding: 0 24px;
-    }
-
-    /* Hide nav on login/signup pages */
-    #view-login.active + .nav,
-    #view-signup.active + .nav,
-    .nav:has(+ #view-login.active),
-    .nav:has(+ #view-signup.active) {
-      display: none;
     }
 
     .nav-inner {
@@ -719,7 +712,6 @@
 
     /* Dashboard Layout */
     .dashboard {
-      padding-top: 80px;
       min-height: 100vh;
     }
 
@@ -1308,7 +1300,12 @@
     }
 
     .view.active {
-      display: block;
+      display: block !important;
+    }
+
+    /* Ensure Tailwind classes can override */
+    .view.hidden {
+      display: none !important;
     }
 
     /* Mobile Responsive */
@@ -1463,34 +1460,7 @@
   </style>
 </head>
 <body>
-  <!-- Navigation -->
-  <nav class="nav" id="main-nav">
-    <div class="nav-inner">
-      <a href="#" class="nav-logo" onclick="navigate('landing'); return false;">
-        <div class="nav-logo-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
-          </svg>
-        </div>
-        KPI Tracker
-      </a>
-      <div class="nav-links" id="nav-links">
-        <a href="#" class="nav-link" onclick="navigate('landing'); return false;">Home</a>
-        <a href="#" class="nav-link" id="nav-features" onclick="navigate('landing'); return false;">Features</a>
-        <a href="#" class="nav-link" id="nav-pricing" onclick="navigate('landing'); return false;">Pricing</a>
-        <a href="#" class="btn btn-primary btn-sm" id="nav-login" onclick="navigate('login'); return false;">Login</a>
-        <a href="#" class="btn btn-outline btn-sm" id="nav-signup" onclick="navigate('signup'); return false;">Sign Up</a>
-      </div>
-      <button class="nav-toggle" onclick="toggleMobileMenu()">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-      </button>
-    </div>
-    <div class="nav-mobile" id="nav-mobile"></div>
-  </nav>
-
-    <!-- Landing Page -->
+  <!-- Landing Page -->
   <div id="view-landing" class="view landing">
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
@@ -1808,179 +1778,231 @@
 
   <!-- Dashboard -->
   <div id="view-dashboard" class="view dashboard">
-    <div class="dashboard-header">
-      <div class="dashboard-header-inner">
-        <div class="user-info">
-          <div class="user-avatar" id="user-avatar">J</div>
-          <span class="user-name" id="user-name">John Doe</span>
+    <!-- Sidebar -->
+    <aside class="hidden lg:flex flex-col w-64 bg-white border-r h-screen fixed left-0 top-0 z-40">
+      <div class="p-4 border-b">
+        <a href="#" onclick="navigate('landing'); return false;" class="text-xl font-bold text-blue-600">Piplhr.KPI</a>
+      </div>
+      <nav class="flex-1 p-4 space-y-1">
+        <button class="nav-link w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-3 bg-blue-50 text-blue-600 transition-all duration-200" data-view="dashboard" onclick="switchView('dashboard')">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+          </svg>
+          Dashboard
+        </button>
+        <button class="nav-link w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-3 text-gray-600 hover:bg-gray-100 transition-all duration-200" data-view="entry" onclick="switchView('entry')">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          Daily Entry
+        </button>
+        <button class="nav-link w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-3 text-gray-600 hover:bg-gray-100 transition-all duration-200" data-view="reports" onclick="switchView('reports')">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Reports
+        </button>
+        <button class="nav-link w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-3 text-gray-600 hover:bg-gray-100 transition-all duration-200" data-view="kpis" onclick="switchView('kpis')">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Manage KPIs
+        </button>
+      </nav>
+      <div class="p-4 border-t">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold" id="user-avatar">J</div>
+          <div>
+            <div class="font-medium text-gray-900" id="user-name">John Doe</div>
+          </div>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="handleLogout()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+        <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2 transition-colors" onclick="handleLogout()">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
           </svg>
           Logout
         </button>
       </div>
-    </div>
-    <div class="dashboard-nav">
-      <div class="dashboard-nav-inner">
-        <button class="nav-link active" data-view="dashboard" onclick="switchView('dashboard')">Dashboard</button>
-        <button class="nav-link" data-view="entry" onclick="switchView('entry')">Daily Entry</button>
-        <button class="nav-link" data-view="reports" onclick="switchView('reports')">Reports</button>
-        <button class="nav-link" data-view="kpis" onclick="switchView('kpis')">Manage KPIs</button>
+    </aside>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="mobile-sidebar" class="fixed inset-0 bg-black/50 z-50 lg:hidden hidden" onclick="toggleMobileSidebar()">
+      <div class="w-64 bg-white h-full p-4 space-y-1" onclick="event.stopPropagation()">
+        <div class="p-2 border-b mb-4">
+          <span class="text-xl font-bold text-blue-600">Piplhr.KPI</span>
+        </div>
+        <button class="nav-link w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-3" data-view="dashboard" onclick="switchView('dashboard'); toggleMobileSidebar();">Dashboard</button>
+        <button class="nav-link w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-3 text-gray-600" data-view="entry" onclick="switchView('entry'); toggleMobileSidebar();">Daily Entry</button>
+        <button class="nav-link w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-3 text-gray-600" data-view="reports" onclick="switchView('reports'); toggleMobileSidebar();">Reports</button>
+        <button class="nav-link w-full text-left px-4 py-2.5 rounded-lg flex items-center gap-3 text-gray-600" data-view="kpis" onclick="switchView('kpis'); toggleMobileSidebar();">Manage KPIs</button>
       </div>
     </div>
-    <div class="dashboard-main">
-      <!-- Dashboard View -->
-      <div id="view-dashboard-content" class="view active">
-        <div class="page-header">
-          <h1 class="page-title">Dashboard</h1>
-          <button class="btn btn-primary" onclick="openKpiModal()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 5v14M5 12h14"/>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64 flex flex-col min-h-screen">
+      <!-- Topbar -->
+      <header class="h-16 bg-white border-b flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30">
+        <div class="flex items-center gap-4">
+          <button class="lg:hidden p-2 hover:bg-gray-100 rounded-lg" onclick="toggleMobileSidebar()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
-            New KPI
           </button>
         </div>
-        <div id="dashboard-grid" class="grid grid-3"></div>
-        <div id="dashboard-empty" class="empty-state" style="display: none;">
-          <div class="empty-state-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
-            </svg>
-          </div>
-          <h3 class="empty-state-title">No KPIs Yet</h3>
-          <p class="empty-state-text">Create your first KPI to start tracking your performance.</p>
-          <button class="btn btn-primary" onclick="openKpiModal()">Create First KPI</button>
-        </div>
-      </div>
+      </header>
 
-      <!-- Entry View -->
-      <div id="view-entry-content" class="view">
-        <div class="page-header">
-          <h1 class="page-title">Daily Entry</h1>
-          <button class="btn btn-primary" onclick="saveEntries()">Save All</button>
-        </div>
-        <div class="date-filter">
-          <input type="date" id="entry-date" class="date-input" onchange="loadEntriesForDate()">
-        </div>
-        <div id="entry-table-container" class="table-container" style="display: none;">
-          <table class="entry-table">
-            <thead>
-              <tr>
-                <th>KPI Name</th>
-                <th>Target</th>
-                <th>Achieved</th>
-              </tr>
-            </thead>
-            <tbody id="entry-tbody"></tbody>
-          </table>
-        </div>
-        <div id="entry-empty" class="empty-state" style="display: none;">
-          <div class="empty-state-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
-              <path d="M16 2v4M8 2v4M3 10h18"/>
-            </svg>
+      <!-- Dashboard Content -->
+      <main class="flex-1 p-4 lg:p-6">
+        <!-- Dashboard View -->
+        <div id="view-dashboard-content" class="view">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <button class="bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition flex items-center gap-2" onclick="openKpiModal()">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/>
+              </svg>
+              New KPI
+            </button>
           </div>
-          <h3 class="empty-state-title">No KPIs Available</h3>
-          <p class="empty-state-text">Create some KPIs first before logging daily entries.</p>
-          <button class="btn btn-primary" onclick="switchView('kpis'); openKpiModal();">Create KPI</button>
+          <div id="dashboard-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+          <div id="dashboard-empty" class="hidden text-center py-16">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3v18h18"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19 9-5 5-4-4-3 3"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No KPIs Yet</h3>
+            <p class="text-gray-500 mb-4">Create your first KPI to start tracking your performance.</p>
+            <button class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition" onclick="openKpiModal()">Create First KPI</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Reports View -->
-      <div id="view-reports-content" class="view">
-        <div class="page-header">
-          <h1 class="page-title">Reports</h1>
-        </div>
-        <div class="date-filter">
-          <div class="date-pills">
-            <button class="date-pill active" data-period="today" onclick="setReportPeriod('today')">Today</button>
-            <button class="date-pill" data-period="week" onclick="setReportPeriod('week')">This Week</button>
-            <button class="date-pill" data-period="month" onclick="setReportPeriod('month')">This Month</button>
-            <button class="date-pill" data-period="quarter" onclick="setReportPeriod('quarter')">This Quarter</button>
-            <button class="date-pill" data-period="year" onclick="setReportPeriod('year')">This Year</button>
+        <!-- Entry View -->
+        <div id="view-entry-content" class="view hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Daily Entry</h1>
+            <button class="bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition" onclick="saveEntries()">Save All</button>
+          </div>
+          <div class="mb-4">
+            <input type="date" id="entry-date" class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" onchange="loadEntriesForDate()">
+          </div>
+          <div id="entry-table-container" class="hidden bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-gray-50 border-b">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">KPI Name</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Target</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Achieved</th>
+                  </tr>
+                </thead>
+                <tbody id="entry-tbody" class="divide-y divide-gray-100"></tbody>
+              </table>
+            </div>
+          </div>
+          <div id="entry-empty" class="hidden text-center py-16">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No KPIs Available</h3>
+            <p class="text-gray-500 mb-4">Create some KPIs first before logging daily entries.</p>
+            <button class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition" onclick="switchView('kpis'); openKpiModal();">Create KPI</button>
           </div>
         </div>
-        <div id="report-stats" class="stats-grid"></div>
-        <div id="report-empty" class="empty-state" style="display: none;">
-          <div class="empty-state-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
-            </svg>
-          </div>
-          <h3 class="empty-state-title">No Data Available</h3>
-          <p class="empty-state-text">Start logging entries to see reports and comparisons.</p>
-        </div>
-      </div>
 
-      <!-- KPIs View -->
-      <div id="view-kpis-content" class="view">
-        <div class="page-header">
-          <h1 class="page-title">Manage KPIs</h1>
-          <button class="btn btn-primary" onclick="openKpiModal()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
-            New KPI
-          </button>
-        </div>
-        <div id="kpi-list"></div>
-        <div id="kpi-empty" class="empty-state" style="display: none;">
-          <div class="empty-state-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
+        <!-- Reports View -->
+        <div id="view-reports-content" class="view hidden">
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-4">Reports</h1>
+            <div class="flex flex-wrap gap-2">
+              <button class="date-pill px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium" data-period="today" onclick="setReportPeriod('today')">Today</button>
+              <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="week" onclick="setReportPeriod('week')">This Week</button>
+              <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="month" onclick="setReportPeriod('month')">This Month</button>
+              <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="quarter" onclick="setReportPeriod('quarter')">This Quarter</button>
+              <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="year" onclick="setReportPeriod('year')">This Year</button>
+            </div>
           </div>
-          <h3 class="empty-state-title">No KPIs Created</h3>
-          <p class="empty-state-text">Create KPIs to track your daily performance and goals.</p>
-          <button class="btn btn-primary" onclick="openKpiModal()">Create KPI</button>
+          <div id="report-stats" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+          <div id="report-empty" class="hidden text-center py-16">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3v18h18"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19 9-5 5-4-4-3 3"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No Data Available</h3>
+            <p class="text-gray-500">Start logging entries to see reports and comparisons.</p>
+          </div>
         </div>
-      </div>
+
+        <!-- KPIs View -->
+        <div id="view-kpis-content" class="view hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Manage KPIs</h1>
+            <button class="bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition flex items-center gap-2" onclick="openKpiModal()">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/>
+              </svg>
+              New KPI
+            </button>
+          </div>
+          <div id="kpi-list" class="space-y-3"></div>
+          <div id="kpi-empty" class="hidden text-center py-16">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 5v14M5 12h14"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No KPIs Created</h3>
+            <p class="text-gray-500 mb-4">Create KPIs to track your daily performance and goals.</p>
+            <button class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition" onclick="openKpiModal()">Create KPI</button>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 
   <!-- KPI Modal -->
-  <div id="kpi-modal" class="modal-overlay" onclick="if(event.target===this)closeKpiModal()">
-    <div class="modal">
-      <div class="modal-header">
-        <h2 class="modal-title" id="kpi-modal-title">Create New KPI</h2>
-        <button class="modal-close" onclick="closeKpiModal()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 6 6 18M6 6l12 12"/>
+  <div id="kpi-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)closeKpiModal()">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900" id="kpi-modal-title">Create New KPI</h2>
+        <button class="p-2 hover:bg-gray-100 rounded-lg transition" onclick="closeKpiModal()">
+          <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
       </div>
-      <div class="modal-body">
-        <form id="kpi-form" onsubmit="handleKpiSubmit(event)">
-          <input type="hidden" id="kpi-id">
-          <div class="form-group">
-            <label class="form-label" for="kpi-title">KPI Title *</label>
-            <input type="text" id="kpi-title" class="form-input" placeholder="Daily Leads Generated" required>
+      <form id="kpi-form" onsubmit="handleKpiSubmit(event)">
+        <input type="hidden" id="kpi-id">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2" for="kpi-title">KPI Title *</label>
+            <input type="text" id="kpi-title" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Daily Leads Generated" required>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="kpi-description">Description</label>
-            <input type="text" id="kpi-description" class="form-input" placeholder="Optional description">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2" for="kpi-description">Description</label>
+            <input type="text" id="kpi-description" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Optional description">
           </div>
-          <div class="form-group">
-            <label class="form-label" for="kpi-type">Data Type *</label>
-            <select id="kpi-type" class="form-select" required onchange="handleTypeChange()">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2" for="kpi-type">Data Type *</label>
+            <select id="kpi-type" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" required onchange="handleTypeChange()">
               <option value="number">Number</option>
               <option value="percentage">Percentage (%)</option>
               <option value="boolean">Yes / No</option>
             </select>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="kpi-target">Target Value *</label>
-            <input type="number" id="kpi-target" class="form-input" placeholder="50" step="any" required>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2" for="kpi-target">Target Value *</label>
+            <input type="number" id="kpi-target" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="50" step="any" required>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeKpiModal()">Cancel</button>
-        <button type="submit" form="kpi-form" class="btn btn-primary" id="kpi-submit-btn">Create KPI</button>
-      </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button type="button" class="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition" onclick="closeKpiModal()">Cancel</button>
+          <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium" id="kpi-submit-btn">Create KPI</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -2054,6 +2076,7 @@
         user = data.user;
         updateUserUI();
         navigate('dashboard');
+        switchView('dashboard');
         loadAllData();
       } catch (error) {
         console.log('Auth check failed:', error);
@@ -2080,6 +2103,7 @@
         localStorage.setItem('token', token);
         updateUserUI();
         navigate('dashboard');
+        switchView('dashboard');
         loadAllData();
         showToast('Welcome back!', 'success');
       } catch (error) {
@@ -2107,6 +2131,7 @@
         localStorage.setItem('token', token);
         updateUserUI();
         navigate('dashboard');
+        switchView('dashboard');
         loadAllData();
         showToast('Account created successfully!', 'success');
       } catch (error) {
@@ -2127,8 +2152,12 @@
 
     function updateUserUI() {
       if (user) {
-        document.getElementById('user-name').textContent = user.name;
-        document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+        const firstLetter = user.name.charAt(0).toUpperCase();
+        const nameEl = document.getElementById('user-name');
+        const avatarEl = document.getElementById('user-avatar');
+        
+        if (nameEl) nameEl.textContent = user.name;
+        if (avatarEl) avatarEl.textContent = firstLetter;
       }
     }
 
@@ -2137,14 +2166,10 @@
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       document.getElementById(`view-${view}`).classList.add('active');
 
-      // Show/hide nav based on view
+      // Show/hide nav based on view (old nav - keep hidden)
       const nav = document.getElementById('main-nav');
       if (nav) {
-        if (view === 'login' || view === 'signup' || view === 'landing') {
-          nav.style.display = 'none';
-        } else {
-          nav.style.display = 'block';
-        }
+        nav.style.display = 'none'; // Keep old nav hidden - dashboard has its own sidebar
       }
 
       // Update nav links (for dashboard view nav)
@@ -2181,10 +2206,28 @@
     }
 
     function switchView(view) {
-      document.querySelectorAll('#view-dashboard .view').forEach(v => v.classList.remove('active'));
-      document.getElementById(`view-${view}-content`).classList.add('active');
-      document.querySelectorAll('.dashboard-nav .nav-link').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.view === view);
+      // Hide all sub-views
+      document.querySelectorAll('#view-dashboard .view').forEach(v => {
+        v.classList.remove('active');
+        v.classList.add('hidden');
+      });
+      
+      // Show selected view
+      const selectedView = document.getElementById(`view-${view}-content`);
+      if (selectedView) {
+        selectedView.classList.add('active');
+        selectedView.classList.remove('hidden');
+      }
+      
+      // Update sidebar active state
+      document.querySelectorAll('#view-dashboard aside .nav-link').forEach(btn => {
+        if (btn.dataset.view === view) {
+          btn.classList.add('bg-blue-50', 'text-blue-600');
+          btn.classList.remove('text-gray-600');
+        } else {
+          btn.classList.remove('bg-blue-50', 'text-blue-600');
+          btn.classList.add('text-gray-600');
+        }
       });
 
       if (view === 'reports') loadReport();
@@ -2194,6 +2237,13 @@
       const mobile = document.getElementById('mobile-menu');
       if (mobile) {
         mobile.classList.toggle('hidden');
+      }
+    }
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('mobile-sidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('hidden');
       }
     }
 
@@ -2216,7 +2266,18 @@
       const date = document.getElementById('entry-date').value;
       try {
         const data = await api(`/entries?start=${date}&end=${date}`);
-        entries = data.entries;
+        const dateEntries = data.entries;
+        
+        // Merge with existing entries - update existing for this date, add new ones
+        dateEntries.forEach(newEntry => {
+          const existingIdx = entries.findIndex(e => e.kpi_id === newEntry.kpi_id && e.date === newEntry.date);
+          if (existingIdx >= 0) {
+            entries[existingIdx] = newEntry;
+          } else {
+            entries.push(newEntry);
+          }
+        });
+        
         renderEntryTable();
       } catch (error) {
         showToast('Failed to load entries', 'error');
@@ -2247,21 +2308,32 @@
         const progress = kpi.target > 0 ? (achieved / kpi.target) * 100 : 0;
         const status = getStatus(progress);
         const suffix = kpi.type === 'percentage' ? '%' : '';
+        
+        const statusColors = {
+          ahead: 'bg-green-500',
+          ontrack: 'bg-blue-500',
+          behind: 'bg-yellow-500'
+        };
+        const statusBg = {
+          ahead: 'bg-green-50 text-green-700',
+          ontrack: 'bg-blue-50 text-blue-700',
+          behind: 'bg-yellow-50 text-yellow-700'
+        };
 
         return `
-          <div class="card kpi-card">
-            <div class="kpi-header">
-              <h3 class="kpi-title">${escapeHtml(kpi.title)}</h3>
-              <span class="kpi-type-badge">${kpi.type}</span>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="font-semibold text-gray-900">${escapeHtml(kpi.title)}</h3>
+              <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">${kpi.type}</span>
             </div>
-            <p class="kpi-target">Target: <span>${formatValue(kpi.target)}${suffix}</span></p>
-            <div class="kpi-value">${formatValue(achieved)}${suffix}</div>
-            <div class="kpi-progress">
-              <div class="kpi-progress-bar ${status}" style="width: ${Math.min(progress, 100)}%"></div>
+            <p class="text-sm text-gray-500 mb-2">Target: <span class="font-medium text-gray-700">${formatValue(kpi.target)}${suffix}</span></p>
+            <div class="text-2xl font-bold text-gray-900 mb-3">${formatValue(achieved)}${suffix}</div>
+            <div class="h-2 bg-gray-100 rounded-full overflow-hidden mb-3">
+              <div class="h-full ${statusColors[status]} rounded-full transition-all" style="width: ${Math.min(progress, 100)}%"></div>
             </div>
-            <div class="kpi-footer">
-              <span class="kpi-percent">${progress.toFixed(1)}% of target</span>
-              <span class="kpi-status ${status}">${getStatusLabel(status)}</span>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-500">${progress.toFixed(1)}% of target</span>
+              <span class="px-2 py-1 rounded-full text-xs font-medium ${statusBg[status]}">${getStatusLabel(status)}</span>
             </div>
           </div>
         `;
@@ -2292,25 +2364,22 @@
         if (kpi.type === 'boolean') {
           const checked = entry && entry.value == 1 ? 'checked' : '';
           inputHtml = `
-            <label class="toggle">
-              <input type="checkbox" id="entry-${kpi.id}" ${checked} onchange="handleEntryChange('${kpi.id}')">
-              <span class="toggle-slider"></span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="entry-${kpi.id}" ${checked} class="sr-only peer" onchange="handleEntryChange('${kpi.id}')">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
             </label>
           `;
         } else {
           inputHtml = `
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input type="number" id="entry-${kpi.id}" class="entry-input" value="${value}" step="any" onchange="handleEntryChange('${kpi.id}')">
-              ${suffix ? `<span style="color:var(--text-muted);">${suffix}</span>` : ''}
-            </div>
+            <input type="number" id="entry-${kpi.id}" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" value="${value}" step="any" oninput="handleEntryChange('${kpi.id}')">
           `;
         }
 
         return `
-          <tr>
-            <td><strong>${escapeHtml(kpi.title)}</strong></td>
-            <td style="color:var(--text-secondary);">${formatValue(kpi.target)}${suffix}</td>
-            <td>${inputHtml}</td>
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-4 py-3 font-medium text-gray-900">${escapeHtml(kpi.title)}</td>
+            <td class="px-4 py-3 text-gray-600">${formatValue(kpi.target)}${suffix}</td>
+            <td class="px-4 py-3">${inputHtml}</td>
           </tr>
         `;
       }).join('');
@@ -2330,14 +2399,14 @@
       list.innerHTML = kpis.map(kpi => {
         const suffix = kpi.type === 'percentage' ? '%' : '';
         return `
-          <div class="kpi-list-item">
-            <div class="kpi-list-info">
-              <div class="kpi-list-title">${escapeHtml(kpi.title)}</div>
-              <div class="kpi-list-meta">${kpi.type} • Target: ${formatValue(kpi.target)}${suffix}</div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-md transition-shadow">
+            <div>
+              <h3 class="font-semibold text-gray-900">${escapeHtml(kpi.title)}</h3>
+              <p class="text-sm text-gray-500">${kpi.type} • Target: ${formatValue(kpi.target)}${suffix}</p>
             </div>
-            <div class="kpi-list-actions">
-              <button class="btn btn-ghost btn-sm" onclick="editKpi('${kpi.id}')">Edit</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteKpi('${kpi.id}')">Delete</button>
+            <div class="flex gap-2">
+              <button class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" onclick="editKpi('${kpi.id}')">Edit</button>
+              <button class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition" onclick="deleteKpi('${kpi.id}')">Delete</button>
             </div>
           </div>
         `;
@@ -2350,11 +2419,13 @@
       document.getElementById('kpi-modal-title').textContent = 'Create New KPI';
       document.getElementById('kpi-submit-btn').textContent = 'Create KPI';
       document.getElementById('kpi-form').reset();
-      document.getElementById('kpi-modal').classList.add('active');
+      document.getElementById('kpi-modal').classList.remove('hidden');
+      document.getElementById('kpi-modal').classList.add('flex');
     }
 
     function closeKpiModal() {
-      document.getElementById('kpi-modal').classList.remove('active');
+      document.getElementById('kpi-modal').classList.add('hidden');
+      document.getElementById('kpi-modal').classList.remove('flex');
       editingKpiId = null;
     }
 
@@ -2399,7 +2470,8 @@
       document.getElementById('kpi-description').value = kpi.description || '';
       document.getElementById('kpi-type').value = kpi.type;
       document.getElementById('kpi-target').value = kpi.target;
-      document.getElementById('kpi-modal').classList.add('active');
+      document.getElementById('kpi-modal').classList.remove('hidden');
+      document.getElementById('kpi-modal').classList.add('flex');
     }
 
     async function deleteKpi(id) {
@@ -2429,9 +2501,25 @@
       document.getElementById('entry-date').value = getTodayDate();
     }
 
+    let entrySaveTimeout = null;
+
     async function handleEntryChange(kpiId) {
+      // Debounce the save to avoid too many API calls
+      clearTimeout(entrySaveTimeout);
+      entrySaveTimeout = setTimeout(() => {
+        saveEntry(kpiId);
+      }, 500);
+    }
+
+    async function saveEntry(kpiId) {
       const date = document.getElementById('entry-date').value;
-      const kpi = kpis.find(k => k.id == kpiId);
+      const kpi = kpis.find(k => k.id == kpiId || k.id === parseInt(kpiId));
+      
+      if (!kpi) {
+        console.error('KPI not found for id:', kpiId);
+        return;
+      }
+      
       let value;
 
       if (kpi.type === 'boolean') {
@@ -2439,25 +2527,52 @@
         value = input.checked ? 1 : 0;
       } else {
         const input = document.getElementById(`entry-${kpiId}`);
-        value = parseFloat(input.value) || 0;
+        const inputVal = input.value.trim();
+        if (inputVal === '') {
+          value = 0;
+        } else {
+          value = parseFloat(inputVal);
+          if (isNaN(value)) value = 0;
+        }
       }
 
+      const kpiIdNum = parseInt(kpiId);
+      
       try {
-        await api('/entries', {
+        const result = await api('/entries', {
           method: 'POST',
-          body: JSON.stringify({ kpi_id: parseInt(kpiId), date, value })
+          body: JSON.stringify({ kpi_id: kpiIdNum, date, value })
         });
 
-        const existing = entries.findIndex(e => e.kpi_id == kpiId && e.date === date);
-        if (existing >= 0) {
-          entries[existing].value = value;
+        // Update local entries
+        const existingIdx = entries.findIndex(e => 
+          (e.kpi_id === kpiIdNum || e.kpi_id === kpiId) && e.date === date
+        );
+        
+        const entryData = { 
+          kpi_id: kpiIdNum, 
+          date, 
+          value,
+          kpi_title: kpi.title, 
+          type: kpi.type, 
+          target: kpi.target 
+        };
+        
+        if (result.entry && result.entry.id) {
+          entryData.id = result.entry.id;
+        }
+        
+        if (existingIdx >= 0) {
+          entries[existingIdx] = { ...entries[existingIdx], ...entryData };
         } else {
-          entries.push({ kpi_id: parseInt(kpiId), date, value });
+          entries.push(entryData);
         }
 
         renderDashboard();
+        showToast('Saved', 'success');
       } catch (error) {
-        showToast('Failed to save entry', 'error');
+        console.error('Save entry error:', error);
+        showToast('Failed to save entry: ' + error.message, 'error');
       }
     }
 
@@ -2501,21 +2616,21 @@
         const avgAchievement = totalTarget > 0 ? (totalAchieved / totalTarget) * 100 : 0;
 
         statsContainer.innerHTML = `
-          <div class="stat-card">
-            <div class="stat-label">Total Entries</div>
-            <div class="stat-value">${periodEntries.length}</div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">Total Entries</div>
+            <div class="text-2xl font-bold text-gray-900">${periodEntries.length}</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">Total Achieved</div>
-            <div class="stat-value">${totalAchieved.toFixed(1)}</div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">Total Achieved</div>
+            <div class="text-2xl font-bold text-gray-900">${totalAchieved.toFixed(1)}</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">Average Achievement</div>
-            <div class="stat-value">${avgAchievement.toFixed(1)}%</div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">Average Achievement</div>
+            <div class="text-2xl font-bold text-gray-900">${avgAchievement.toFixed(1)}%</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">Active KPIs</div>
-            <div class="stat-value">${kpis.length}</div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">Active KPIs</div>
+            <div class="text-2xl font-bold text-gray-900">${kpis.length}</div>
           </div>
         `;
       } catch (error) {
