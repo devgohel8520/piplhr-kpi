@@ -1859,14 +1859,17 @@
       <main class="flex-1 p-4 lg:p-6">
         <!-- Dashboard View -->
         <div id="view-dashboard-content" class="view">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <button class="bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition flex items-center gap-2" onclick="openKpiModal()">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/>
-              </svg>
-              New KPI
-            </button>
+            <div class="flex items-center gap-4">
+              <input type="date" id="dashboard-date" class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" onchange="renderDashboard()">
+              <button class="bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition flex items-center gap-2" onclick="openKpiModal()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/>
+                </svg>
+                New KPI
+              </button>
+            </div>
           </div>
           <div id="dashboard-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
           <div id="dashboard-empty" class="hidden text-center py-16">
@@ -2266,6 +2269,9 @@
         document.getElementById('entry-date').value = new Date().toISOString().split('T')[0];
         loadEntriesForDate();
       }
+      if (view === 'dashboard') {
+        document.getElementById('dashboard-date').value = new Date().toISOString().split('T')[0];
+      }
     }
 
     function toggleMobileMenu() {
@@ -2328,7 +2334,7 @@
     function renderDashboard() {
       const grid = document.getElementById('dashboard-grid');
       const empty = document.getElementById('dashboard-empty');
-      const today = getTodayDate();
+      const selectedDate = document.getElementById('dashboard-date').value || getTodayDate();
 
       if (kpis.length === 0) {
         grid.innerHTML = '';
@@ -2338,7 +2344,7 @@
 
       empty.style.display = 'none';
       grid.innerHTML = kpis.map(kpi => {
-        const entry = entries.find(e => e.kpi_id === kpi.id && e.date === today);
+        const entry = entries.find(e => e.kpi_id === kpi.id && e.date === selectedDate);
         const achieved = entry ? parseFloat(entry.value) : 0;
         const progress = kpi.target > 0 ? (achieved / kpi.target) * 100 : 0;
         const status = getStatus(progress);
