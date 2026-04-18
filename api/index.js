@@ -96,7 +96,7 @@ export async function GET(request) {
     const kpis = await sql`
       SELECT id, title, description, type, target, created_at, updated_at
       FROM kpis WHERE user_id = ${auth.user.id}
-      ORDER BY created_at DESC
+      ORDER BY created_at ASC
     `;
     return jsonResponse({ kpis });
   }
@@ -113,7 +113,7 @@ export async function GET(request) {
         FROM entries e
         JOIN kpis k ON e.kpi_id = k.id
         WHERE k.user_id = ${auth.user.id} AND e.kpi_id = ${kpi_id}
-        ORDER BY e.date DESC
+        ORDER BY e.date ASC
       `;
     } else if (start && end) {
       entries = await sql`
@@ -122,7 +122,7 @@ export async function GET(request) {
         FROM entries e
         JOIN kpis k ON e.kpi_id = k.id
         WHERE k.user_id = ${auth.user.id} AND e.date BETWEEN ${start} AND ${end}
-        ORDER BY e.date DESC
+        ORDER BY e.date ASC
       `;
     } else {
       entries = await sql`
@@ -131,7 +131,7 @@ export async function GET(request) {
         FROM entries e
         JOIN kpis k ON e.kpi_id = k.id
         WHERE k.user_id = ${auth.user.id}
-        ORDER BY e.date DESC
+        ORDER BY e.date ASC
       `;
     }
     return jsonResponse({ entries });
