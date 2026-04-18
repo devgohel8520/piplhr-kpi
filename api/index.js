@@ -42,6 +42,17 @@ async function initDb() {
       UNIQUE(kpi_id, date)
     )
   `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS notes (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      title VARCHAR(200) NOT NULL,
+      content TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
 }
 
 // Auth middleware
@@ -135,6 +146,16 @@ export async function GET(request) {
       `;
     }
     return jsonResponse({ entries });
+  }
+
+  // Get notes
+  if (path === '/api/notes') {
+    const notes = await sql`
+      SELECT id, title, content, created_at, updated_at
+      FROM notes WHERE user_id = ${auth.user.id}
+      ORDER BY updated_at DESC
+    `;
+    return jsonResponse({ notes });
   }
 
   return errorResponse('Not found', 404);
@@ -269,6 +290,26 @@ export async function POST(request) {
     return jsonResponse({ entry: result[0] }, 201);
   }
 
+  // Create note
+  if (path === '/api/notes') {
+    const auth = authenticateToken(request);
+    if (auth.error) return errorResponse(auth.error, auth.status);
+
+    const { title, content } = body;
+
+    if (!title) {
+      return errorResponse('Title is required', 400);
+    }
+
+    const result = await sql`
+      INSERT INTO notes (user_id, title, content)
+      VALUES (${auth.user.id}, ${title}, ${content || ''})
+      RETURNING id, title, content, created_at
+    `;
+
+    return jsonResponse({ note: result[0] }, 201);
+  }
+
   return errorResponse('Not found', 404);
 }
 
@@ -349,6 +390,36 @@ export async function PUT(request) {
     return jsonResponse({ entry: result[0] });
   }
 
+  // Update note
+  const noteMatch = path.match(/^\/api\/notes\/(\d+)$/);
+  if (noteMatch) {
+    const id = noteMatch[1];
+    let body = {};
+    try {
+      body = await request.json();
+    } catch {
+      return errorResponse('Invalid JSON body', 400);
+    }
+
+    const { title, content } = body;
+
+    const existing = await sql`SELECT id FROM notes WHERE id = ${id} AND user_id = ${auth.user.id}`;
+    if (existing.length === 0) {
+      return errorResponse('Note not found', 404);
+    }
+
+    const result = await sql`
+      UPDATE notes
+      SET title = COALESCE(${title}, title),
+          content = COALESCE(${content}, content),
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING id, title, content, created_at, updated_at
+    `;
+
+    return jsonResponse({ note: result[0] });
+  }
+
   return errorResponse('Not found', 404);
 }
 
@@ -394,6 +465,22 @@ export async function DELETE(request) {
     }
 
     return jsonResponse({ message: 'Entry deleted successfully' });
+  }
+
+  // Delete note
+  const noteMatch = path.match(/^\/api\/notes\/(\d+)$/);
+  if (noteMatch) {
+    const id = noteMatch[1];
+
+    const result = await sql`
+      DELETE FROM notes WHERE id = ${id} AND user_id = ${auth.user.id} RETURNING id
+    `;
+
+    if (result.length === 0) {
+      return errorResponse('Note not found', 404);
+    }
+
+    return jsonResponse({ message: 'Note deleted successfully' });
   }
 
   return errorResponse('Not found', 404);
