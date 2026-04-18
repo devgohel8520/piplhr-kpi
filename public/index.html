@@ -1920,12 +1920,25 @@
         <div id="view-reports-content" class="view hidden">
           <div class="mb-6">
             <h1 class="text-2xl font-bold text-gray-900 mb-4">Reports</h1>
-            <div class="flex flex-wrap gap-2">
+            
+            <!-- Period Pills -->
+            <div class="flex flex-wrap gap-2 mb-4">
               <button class="date-pill px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium" data-period="today" onclick="setReportPeriod('today')">Today</button>
               <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="week" onclick="setReportPeriod('week')">This Week</button>
               <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="month" onclick="setReportPeriod('month')">This Month</button>
               <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="quarter" onclick="setReportPeriod('quarter')">This Quarter</button>
               <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="year" onclick="setReportPeriod('year')">This Year</button>
+            </div>
+            
+            <!-- Custom Date Range -->
+            <div class="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-lg">
+              <span class="text-sm font-medium text-gray-600">Custom Range:</span>
+              <div class="flex items-center gap-2">
+                <input type="date" id="report-from-date" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                <span class="text-gray-400">to</span>
+                <input type="date" id="report-to-date" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition" onclick="loadCustomReport()">Apply</button>
+              </div>
             </div>
           </div>
           <div id="report-stats" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
@@ -2596,10 +2609,109 @@
 
     // Reports
     function setReportPeriod(period) {
+      // Update button styles
       document.querySelectorAll('.date-pill').forEach(pill => {
-        pill.classList.toggle('active', pill.dataset.period === period);
+        if (pill.dataset.period === period) {
+          pill.classList.remove('bg-gray-100', 'text-gray-600');
+          pill.classList.add('bg-blue-600', 'text-white');
+        } else {
+          pill.classList.remove('bg-blue-600', 'text-white');
+          pill.classList.add('bg-gray-100', 'text-gray-600');
+        }
       });
       loadReport(period);
+    }
+
+    async function loadCustomReport() {
+      const fromDate = document.getElementById('report-from-date').value;
+      const toDate = document.getElementById('report-to-date').value;
+      
+      if (!fromDate || !toDate) {
+        showToast('Please select both dates', 'error');
+        return;
+      }
+      
+      if (fromDate > toDate) {
+        showToast('From date must be before To date', 'error');
+        return;
+      }
+      
+      // Reset period buttons
+      document.querySelectorAll('.date-pill').forEach(pill => {
+        pill.classList.remove('bg-blue-600', 'text-white');
+        pill.classList.add('bg-gray-100', 'text-gray-600');
+      });
+      
+      const statsContainer = document.getElementById('report-stats');
+      const empty = document.getElementById('report-empty');
+
+      try {
+        const data = await api(`/entries?start=${fromDate}&end=${toDate}`);
+        const periodEntries = data.entries;
+
+        if (periodEntries.length === 0) {
+          statsContainer.innerHTML = '';
+          empty.style.display = 'block';
+          return;
+        }
+
+        empty.style.display = 'none';
+
+        // Calculate stats per KPI
+        const kpiStats = {};
+        periodEntries.forEach(e => {
+          if (!kpiStats[e.kpi_id]) {
+            kpiStats[e.kpi_id] = { achieved: 0, target: 0, title: e.kpi_title };
+          }
+          kpiStats[e.kpi_id].achieved += parseFloat(e.value);
+          kpiStats[e.kpi_id].target += parseFloat(e.target);
+        });
+
+        const totalEntries = periodEntries.length;
+        let totalAchieved = 0;
+        let totalTarget = 0;
+        let onTrack = 0;
+        let behind = 0;
+        
+        Object.values(kpiStats).forEach(k => {
+          totalAchieved += k.achieved;
+          totalTarget += k.target;
+          const pct = k.target > 0 ? (k.achieved / k.target) * 100 : 0;
+          if (pct >= 100) onTrack++;
+          else behind++;
+        });
+
+        const avgAchievement = totalTarget > 0 ? (totalAchieved / totalTarget) * 100 : 0;
+
+        statsContainer.innerHTML = `
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">Total Entries</div>
+            <div class="text-2xl font-bold text-gray-900">${totalEntries}</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">Total Achieved</div>
+            <div class="text-2xl font-bold text-gray-900">${totalAchieved.toFixed(1)}</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">Average Achievement</div>
+            <div class="text-2xl font-bold text-gray-900">${avgAchievement.toFixed(1)}%</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">KPIs On Track</div>
+            <div class="text-2xl font-bold text-green-600">${onTrack}</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">KPIs Behind</div>
+            <div class="text-2xl font-bold text-red-600">${behind}</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">Active KPIs</div>
+            <div class="text-2xl font-bold text-gray-900">${kpis.length}</div>
+          </div>
+        `;
+      } catch (error) {
+        showToast('Failed to load report', 'error');
+      }
     }
 
     async function loadReport(period = 'today') {
@@ -2619,12 +2731,28 @@
 
         empty.style.display = 'none';
 
+        // Calculate stats per KPI
+        const kpiStats = {};
+        periodEntries.forEach(e => {
+          if (!kpiStats[e.kpi_id]) {
+            kpiStats[e.kpi_id] = { achieved: 0, target: 0, title: e.kpi_title };
+          }
+          kpiStats[e.kpi_id].achieved += parseFloat(e.value);
+          kpiStats[e.kpi_id].target += parseFloat(e.target);
+        });
+
+        const totalEntries = periodEntries.length;
         let totalAchieved = 0;
         let totalTarget = 0;
-
-        periodEntries.forEach(e => {
-          totalAchieved += parseFloat(e.value);
-          totalTarget += parseFloat(e.target);
+        let onTrack = 0;
+        let behind = 0;
+        
+        Object.values(kpiStats).forEach(k => {
+          totalAchieved += k.achieved;
+          totalTarget += k.target;
+          const pct = k.target > 0 ? (k.achieved / k.target) * 100 : 0;
+          if (pct >= 100) onTrack++;
+          else behind++;
         });
 
         const avgAchievement = totalTarget > 0 ? (totalAchieved / totalTarget) * 100 : 0;
@@ -2632,7 +2760,7 @@
         statsContainer.innerHTML = `
           <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-sm text-gray-500 mb-1">Total Entries</div>
-            <div class="text-2xl font-bold text-gray-900">${periodEntries.length}</div>
+            <div class="text-2xl font-bold text-gray-900">${totalEntries}</div>
           </div>
           <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-sm text-gray-500 mb-1">Total Achieved</div>
@@ -2641,6 +2769,14 @@
           <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-sm text-gray-500 mb-1">Average Achievement</div>
             <div class="text-2xl font-bold text-gray-900">${avgAchievement.toFixed(1)}%</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">KPIs On Track</div>
+            <div class="text-2xl font-bold text-green-600">${onTrack}</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-sm text-gray-500 mb-1">KPIs Behind</div>
+            <div class="text-2xl font-bold text-red-600">${behind}</div>
           </div>
           <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-sm text-gray-500 mb-1">Active KPIs</div>
