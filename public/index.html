@@ -1921,19 +1921,23 @@
           <div class="mb-6">
             <h1 class="text-2xl font-bold text-gray-900 mb-4">Reports</h1>
             
-            <!-- Period Pills -->
-            <div class="flex flex-wrap gap-2 mb-4">
-              <button class="date-pill px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium" data-period="today" onclick="setReportPeriod('today')">Today</button>
-              <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="week" onclick="setReportPeriod('week')">This Week</button>
-              <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="month" onclick="setReportPeriod('month')">This Month</button>
-              <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="quarter" onclick="setReportPeriod('quarter')">This Quarter</button>
-              <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="year" onclick="setReportPeriod('year')">This Year</button>
-            </div>
-            
-            <!-- Custom Date Range -->
+            <!-- Period Pills and Custom Date Range - Same Line -->
             <div class="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-lg">
-              <span class="text-sm font-medium text-gray-600">Custom Range:</span>
+              <!-- Period Buttons -->
+              <div class="flex flex-wrap gap-2">
+                <button class="date-pill px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium" data-period="today" onclick="setReportPeriod('today')">Today</button>
+                <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="week" onclick="setReportPeriod('week')">This Week</button>
+                <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="month" onclick="setReportPeriod('month')">This Month</button>
+                <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="quarter" onclick="setReportPeriod('quarter')">This Quarter</button>
+                <button class="date-pill px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition" data-period="year" onclick="setReportPeriod('year')">This Year</button>
+              </div>
+              
+              <!-- Divider -->
+              <div class="h-8 w-px bg-gray-300 hidden lg:block"></div>
+              
+              <!-- Custom Date Range -->
               <div class="flex items-center gap-2">
+                <span class="text-sm font-medium text-gray-600 whitespace-nowrap">Custom Range:</span>
                 <input type="date" id="report-from-date" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                 <span class="text-gray-400">to</span>
                 <input type="date" id="report-to-date" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
