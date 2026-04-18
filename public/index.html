@@ -2262,6 +2262,10 @@
       });
 
       if (view === 'reports') loadReport();
+      if (view === 'entry') {
+        document.getElementById('entry-date').value = new Date().toISOString().split('T')[0];
+        loadEntriesForDate();
+      }
     }
 
     function toggleMobileMenu() {
