@@ -1869,7 +1869,8 @@
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
             <div class="flex items-center gap-4">
-              <input type="date" id="dashboard-date" class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" onchange="renderDashboard()">
+              <input type="date" id="dashboard-date" class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+              <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition" onclick="loadDashboardForDate()">Get Data</button>
               <button class="bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition flex items-center gap-2" onclick="openKpiModal()">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/>
@@ -2408,7 +2409,31 @@
           }
         });
         
-        renderEntryTable();
+renderEntryTable();
+    }
+
+    async function loadDashboardForDate() {
+      const date = document.getElementById('dashboard-date').value;
+      if (!date) {
+        showToast('Please select a date', 'error');
+        return;
+      }
+      
+      try {
+        const data = await api(`/entries?start=${date}&end=${date}`);
+        const dateEntries = data.entries || [];
+        
+        dateEntries.forEach(newEntry => {
+          const existingIdx = entries.findIndex(e => e.kpi_id === newEntry.kpi_id && e.date === newEntry.date);
+          if (existingIdx >= 0) {
+            entries[existingIdx] = newEntry;
+          } else {
+            entries.push(newEntry);
+          }
+        });
+        
+        renderDashboard();
+        showToast(`Showing data for ${date}`, 'success');
       } catch (error) {
         showToast('Failed to load entries', 'error');
       }

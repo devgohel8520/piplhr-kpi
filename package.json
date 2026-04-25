@@ -1,7 +1,7 @@
 {
   "name": "kpi-dashboard",
   "version": "1.0.0",
-  "description": "KPI Dashboard with Vercel Serverless and Neon PostgreSQL",
+  "description": "KPI Dashboard with Vercel Serverless and Vercel Postgres",
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
@@ -9,7 +9,7 @@
     "start": "vercel dev"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.9.0",
+    "@vercel/postgres": "^0.8.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2"
   },
