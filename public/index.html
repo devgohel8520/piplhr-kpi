@@ -2409,7 +2409,10 @@
           }
         });
         
-renderEntryTable();
+        renderEntryTable();
+      } catch (error) {
+        showToast('Failed to load entries', 'error');
+      }
     }
 
     async function loadDashboardForDate() {
